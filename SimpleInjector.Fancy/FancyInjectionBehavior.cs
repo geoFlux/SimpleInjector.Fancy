@@ -4,7 +4,7 @@ using SimpleInjector.Advanced;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 
-namespace Funky.SimpleInjector
+namespace SimpleInjector.Fancy
 {
     public class FancyInjectionBehavior<T> : IDependencyInjectionBehavior where T : class
     {
