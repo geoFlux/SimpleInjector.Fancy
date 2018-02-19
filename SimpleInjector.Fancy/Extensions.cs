@@ -22,7 +22,15 @@ namespace SimpleInjector.Fancy
         {
             _this.Options.DependencyInjectionBehavior = new FancyInjectionBehavior<T>(_this, canCreateInstance, instanceCreator, keyFunc, lifestyle);
         }
-
+        public static void RegisterWithConstructorParams<TService, TImplementation, TParam1>(this Container _this, Lifestyle lifestyle, Func<string, TParam1> func1) where TParam1: class
+        {
+            var funcTable = getNamedFuncs(func1);
+            Register(_this,
+                info => funcTable.Keys.Contains(info.Target.Parameter.Name) && info.ImplementationType == typeof(TImplementation),
+                info => funcTable[info.Target.Parameter.Name](info.Target.Parameter.Name),
+                info => info.Target.Parameter.Name.GetHashCode()^ typeof(TImplementation).GetHashCode(),
+                lifestyle);
+        }
         public static void RegisterByParameterNames<T>(this Container _this, Lifestyle lifestyle, params Func<string, T>[] funcs) where T : class
         {
             var funcTable = getNamedFuncs(funcs);
@@ -30,7 +38,7 @@ namespace SimpleInjector.Fancy
             Register(_this,
                 info => funcTable.Keys.Contains(info.Target.Parameter.Name),
                 info => funcTable[info.Target.Parameter.Name](info.Target.Parameter.Name),
-                info => info.Target.Parameter.Name,
+                info => info.Target.Parameter.Name ,
                 lifestyle);
         }
         public static void RegisterByParameterNames<T1, T2>(this Container _this, Lifestyle lifestyle, Func<string, T1> func1, Func<string, T2> func2)
